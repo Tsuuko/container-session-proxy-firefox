@@ -29,7 +29,7 @@ export default defineConfig({
           ],
         },
         id: 'container-session-proxy@example.local',
-        strict_min_version: '91.1.0',
+        strict_min_version: '142.0',
       },
     },
   },

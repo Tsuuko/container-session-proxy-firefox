@@ -30,121 +30,8 @@ interface RandomizeHashResponse {
 
 const appVersion = __APP_VERSION__;
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <main class="shell">
-    <header class="header">
-      <div>
-        <p class="eyebrow">Firefox containers</p>
-        <div class="title-row">
-          <img class="title-icon" src="/icon/icon.svg" alt="" aria-hidden="true" />
-          <h1>Session Proxy</h1>
-          <span class="version-badge">${appVersion}</span>
-        </div>
-      </div>
-      <div class="header-controls">
-        <button id="openIpCheck" class="secondary" type="button">IP Check</button>
-        <label class="switch" title="Enable proxy">
-          <input id="enabled" type="checkbox" />
-          <span></span>
-        </label>
-      </div>
-    </header>
-
-    <section class="status-grid">
-      <div>
-        <span class="meta-label">Container</span>
-        <code id="cookieStoreId">-</code>
-      </div>
-      <div>
-        <span class="meta-label">Session</span>
-        <code id="sessionId">-</code>
-      </div>
-    </section>
-
-    <form id="settingsForm" class="settings">
-      <label class="field">
-        <span>Proxy URL template</span>
-        <textarea
-          id="proxyUrlTemplate"
-          spellcheck="false"
-          placeholder="socks5h://user-session-\${session}:pass@host.example:22228"
-        ></textarea>
-      </label>
-
-      <label class="field">
-        <span>Session template</span>
-        <input
-          id="sessionTemplate"
-          type="text"
-          spellcheck="false"
-          placeholder="csp\${hash}test"
-        />
-      </label>
-
-      <div class="proxy-actions">
-        <p id="message" class="message" role="status"></p>
-        <button id="save" type="submit">Save</button>
-      </div>
-
-      <section class="preview-panel">
-        <span class="meta-label">Session preview</span>
-        <code id="sessionPreview">-</code>
-      </section>
-
-      <section class="template-list">
-        <div class="panel-heading">
-          <span class="meta-label">Session template variables</span>
-          <button id="randomizeHash" class="link-button" type="button">
-            <svg class="spin-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M21 12a9 9 0 1 1-2.64-6.36" />
-              <path d="M21 3v6h-6" />
-            </svg>
-            <span>Randomize hash</span>
-          </button>
-        </div>
-        <dl>
-          <div>
-            <dt><code>\${hash}</code></dt>
-            <dd><code id="templateHash">-</code></dd>
-          </div>
-          <div>
-            <dt><code>\${hash_long}</code></dt>
-            <dd><code id="templateHashLong">-</code></dd>
-          </div>
-          <div>
-            <dt><code>\${cookieStoreId}</code></dt>
-            <dd><code id="templateCookieStoreId">-</code></dd>
-          </div>
-          <div>
-            <dt><code>\${containerId}</code></dt>
-            <dd><code id="templateContainerId">-</code></dd>
-          </div>
-          <div>
-            <dt><code>\${containerSlug}</code></dt>
-            <dd><code id="templateContainerSlug">-</code></dd>
-          </div>
-        </dl>
-      </section>
-
-      <section class="option-list">
-        <label class="checkbox-field" title="Use direct connection for normal tabs and private tabs that are not Firefox containers.">
-          <input id="directNonContainer" type="checkbox" />
-          <span>Direct for non-container tabs</span>
-        </label>
-        <label class="checkbox-field" title="Bypass the proxy for localhost, .local, private IPv4 ranges, and local IPv6 ranges.">
-          <input id="bypassLocal" type="checkbox" />
-          <span>Exclude local/private addresses</span>
-        </label>
-        <label class="checkbox-field" title="Disable WebRTC peer connections to prevent WebRTC IP leaks.">
-          <input id="disableWebRtc" type="checkbox" />
-          <span>Disable WebRTC</span>
-        </label>
-      </section>
-    </form>
-  </main>
-`;
-
 const elements = {
+  appVersion: query<HTMLElement>('#appVersion'),
   bypassLocal: query<HTMLInputElement>('#bypassLocal'),
   cookieStoreId: query<HTMLElement>('#cookieStoreId'),
   disableWebRtc: query<HTMLInputElement>('#disableWebRtc'),
@@ -165,6 +52,8 @@ const elements = {
   templateHash: query<HTMLElement>('#templateHash'),
   templateHashLong: query<HTMLElement>('#templateHashLong'),
 };
+
+elements.appVersion.textContent = appVersion;
 
 let currentCookieStoreId = DEFAULT_COOKIE_STORE_ID;
 let currentHashSalt = DEFAULT_SETTINGS.hashSalt;

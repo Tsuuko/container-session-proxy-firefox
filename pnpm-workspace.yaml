@@ -1,3 +1,5 @@
 allowBuilds:
   esbuild: true
   spawn-sync: true
+minimumReleaseAgeExclude:
+  - typescript@7.0.2

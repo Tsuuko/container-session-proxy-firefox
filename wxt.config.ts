@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import packageJson from './package.json';
 
 export default defineConfig({
   manifest: {
@@ -30,4 +31,9 @@ export default defineConfig({
       },
     },
   },
+  vite: () => ({
+    define: {
+      __APP_VERSION__: JSON.stringify(`v${packageJson.version}`),
+    },
+  }),
 });

@@ -7,6 +7,8 @@ import {
 } from '@/utils/proxy-config';
 import './style.css';
 
+declare const __APP_VERSION__: string;
+
 type RuntimeRequest =
   | { type: 'get-status' }
   | { type: 'open-ip-check' }
@@ -26,12 +28,17 @@ interface RandomizeHashResponse {
   hashSalt: string;
 }
 
+const appVersion = __APP_VERSION__;
+
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <main class="shell">
     <header class="header">
       <div>
         <p class="eyebrow">Firefox containers</p>
-        <h1>Session Proxy</h1>
+        <div class="title-row">
+          <h1>Session Proxy</h1>
+          <span class="version-badge">${appVersion}</span>
+        </div>
       </div>
       <div class="header-controls">
         <button id="openIpCheck" class="secondary" type="button">IP Check</button>

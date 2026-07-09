@@ -4,7 +4,8 @@ import packageJson from './package.json';
 export default defineConfig({
   manifest: {
     name: 'Container Session Proxy',
-    description: 'Assigns a deterministic proxy session to each Firefox container.',
+    description:
+      'Assigns a deterministic proxy session to each Firefox container.',
     permissions: [
       'cookies',
       'privacy',

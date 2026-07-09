@@ -208,7 +208,10 @@ async function initialize(): Promise<void> {
   try {
     const status = await sendMessage<StatusResponse>({ type: 'get-status' });
     renderStatus(status);
-    setMessage(status.configError || '', status.configError ? 'error' : 'muted');
+    setMessage(
+      status.configError || '',
+      status.configError ? 'error' : 'muted',
+    );
   } catch (error) {
     setMessage(getErrorMessage(error), 'error');
   } finally {
@@ -246,9 +249,7 @@ async function saveCurrentSettings(): Promise<void> {
 function queueControlSettingsSave(): void {
   setMessage('Applying...', 'muted');
 
-  autoSaveTask = autoSaveTask
-    .catch(() => undefined)
-    .then(saveControlSettings);
+  autoSaveTask = autoSaveTask.catch(() => undefined).then(saveControlSettings);
 }
 
 async function saveControlSettings(): Promise<void> {

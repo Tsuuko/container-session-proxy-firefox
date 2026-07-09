@@ -228,7 +228,9 @@ function getFallbackCredentials(
   }
 }
 
-function buildProxy(details: Pick<WebRequestDetails, 'cookieStoreId'>): ParsedProxy {
+function buildProxy(
+  details: Pick<WebRequestDetails, 'cookieStoreId'>,
+): ParsedProxy {
   return buildProxyFromSettings(
     activeSettings,
     details.cookieStoreId || DEFAULT_COOKIE_STORE_ID,
@@ -262,7 +264,9 @@ async function getStatus(): Promise<StatusResponse> {
   return createStatusResponse(getTabCookieStoreId(tab));
 }
 
-async function updateSettings(settings: ProxySettings): Promise<StatusResponse> {
+async function updateSettings(
+  settings: ProxySettings,
+): Promise<StatusResponse> {
   const nextSettings = normalizeSettings(settings);
 
   if (nextSettings.enabled) {
@@ -317,7 +321,9 @@ async function applyPrivacySettings(settings: ProxySettings): Promise<void> {
   const peerConnectionEnabled = privacyApi.network?.peerConnectionEnabled;
 
   if (!peerConnectionEnabled) {
-    console.warn('WebRTC privacy setting is unavailable in this Firefox build.');
+    console.warn(
+      'WebRTC privacy setting is unavailable in this Firefox build.',
+    );
     return;
   }
 
@@ -486,10 +492,7 @@ function isPrivateIpv6(hostname: string): boolean {
     return false;
   }
 
-  return (
-    (firstValue & 0xfe00) === 0xfc00 ||
-    (firstValue & 0xffc0) === 0xfe80
-  );
+  return (firstValue & 0xfe00) === 0xfc00 || (firstValue & 0xffc0) === 0xfe80;
 }
 
 function getErrorMessage(error: unknown): string {
@@ -500,7 +503,7 @@ function createRandomSalt(): string {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
 
-  return Array.from(bytes, (byte) =>
-    byte.toString(16).padStart(2, '0'),
-  ).join('');
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join(
+    '',
+  );
 }

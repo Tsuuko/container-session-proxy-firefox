@@ -12,9 +12,12 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox --mv2",
     "compile": "tsc --noEmit",
+    "format": "oxfmt . --write",
+    "format:check": "oxfmt . --check",
     "postinstall": "wxt prepare"
   },
   "devDependencies": {
+    "oxfmt": "^0.58.0",
     "typescript": "^7.0.2",
     "wxt": "^0.20.27"
   }

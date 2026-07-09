@@ -130,4 +130,3 @@ pnpm run dev:firefox
 pnpm run build:firefox
 pnpm run zip:firefox
 ```
-

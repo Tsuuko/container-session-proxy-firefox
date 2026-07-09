@@ -64,9 +64,7 @@ export const DEFAULT_SETTINGS: ProxySettings = {
 
 export function normalizeSettings(value: unknown): ProxySettings {
   const input =
-    value && typeof value === 'object'
-      ? (value as StoredProxySettings)
-      : {};
+    value && typeof value === 'object' ? (value as StoredProxySettings) : {};
 
   return {
     bypassLocal:
@@ -173,7 +171,10 @@ function renderSessionTemplate(
 ): string {
   const template = sessionTemplate.trim() || DEFAULT_SETTINGS.sessionTemplate;
   const { session: _session, ...sessionTemplateReplacements } = replacements;
-  const rendered = replaceTemplateVariables(template, sessionTemplateReplacements);
+  const rendered = replaceTemplateVariables(
+    template,
+    sessionTemplateReplacements,
+  );
 
   return sanitizeSessionTokenPart(rendered).slice(0, 64) || replacements.hash;
 }
@@ -367,7 +368,9 @@ function migrateLegacySessionPrefix(value: unknown): string {
 
   const prefix = sanitizeSessionTokenPart(value);
 
-  return prefix ? `${prefix}_${DEFAULT_SETTINGS.sessionTemplate}` : DEFAULT_SETTINGS.sessionTemplate;
+  return prefix
+    ? `${prefix}_${DEFAULT_SETTINGS.sessionTemplate}`
+    : DEFAULT_SETTINGS.sessionTemplate;
 }
 
 function hashString(value: string): string {

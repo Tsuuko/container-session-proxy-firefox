@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Release Procedure'
+  short_description: 'Bump version, commit, tag, and push'
+  default_prompt: 'Use $release-procedure to prepare and push a new repository release.'

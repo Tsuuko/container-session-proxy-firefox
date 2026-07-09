@@ -302,6 +302,17 @@ textarea {
   gap: 8px;
 }
 
+.proxy-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.proxy-actions .message {
+  flex: 1 1 auto;
+}
+
 .preview-panel,
 .template-list {
   display: grid;
@@ -350,9 +361,4 @@ textarea {
 
 .message[data-tone="success"] {
   color: #1f6f56;
-}
-
-.actions {
-  display: flex;
-  justify-content: end;
 }

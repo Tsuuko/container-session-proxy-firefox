@@ -81,6 +81,11 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         />
       </label>
 
+      <div class="proxy-actions">
+        <p id="message" class="message" role="status"></p>
+        <button id="save" type="submit">Save</button>
+      </div>
+
       <section class="preview-panel">
         <span class="meta-label">Session preview</span>
         <code id="sessionPreview">-</code>
@@ -135,12 +140,6 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
           <span>Disable WebRTC</span>
         </label>
       </section>
-
-      <p id="message" class="message" role="status"></p>
-
-      <div class="actions">
-        <button id="save" type="submit">Save</button>
-      </div>
     </form>
   </main>
 `;
@@ -169,6 +168,8 @@ const elements = {
 
 let currentCookieStoreId = DEFAULT_COOKIE_STORE_ID;
 let currentHashSalt = DEFAULT_SETTINGS.hashSalt;
+let savedSettings = DEFAULT_SETTINGS;
+let autoSaveTask: Promise<void> = Promise.resolve();
 
 void initialize();
 
@@ -179,6 +180,17 @@ elements.settingsForm.addEventListener('submit', (event) => {
 
 elements.sessionTemplate.addEventListener('input', () => {
   renderTemplateValues(currentCookieStoreId, collectSettings());
+});
+
+[
+  elements.bypassLocal,
+  elements.disableWebRtc,
+  elements.directNonContainer,
+  elements.enabled,
+].forEach((element) => {
+  element.addEventListener('change', () => {
+    queueControlSettingsSave();
+  });
 });
 
 elements.openIpCheck.addEventListener('click', () => {
@@ -209,6 +221,8 @@ async function saveCurrentSettings(): Promise<void> {
   setMessage('Saving...', 'muted');
 
   try {
+    await autoSaveTask;
+
     const status = await sendMessage<StatusResponse>({
       settings: collectSettings(),
       type: 'save-settings',
@@ -229,6 +243,34 @@ async function saveCurrentSettings(): Promise<void> {
   }
 }
 
+function queueControlSettingsSave(): void {
+  setMessage('Applying...', 'muted');
+
+  autoSaveTask = autoSaveTask
+    .catch(() => undefined)
+    .then(saveControlSettings);
+}
+
+async function saveControlSettings(): Promise<void> {
+  try {
+    const status = await sendMessage<StatusResponse>({
+      settings: collectControlSettings(),
+      type: 'save-settings',
+    });
+
+    renderStatus(status, { updateInputs: false });
+
+    if (status.configError) {
+      setMessage(status.configError, 'error');
+      return;
+    }
+
+    setMessage('Applied.', 'success');
+  } catch (error) {
+    setMessage(getErrorMessage(error), 'error');
+  }
+}
+
 async function randomizeHash(): Promise<void> {
   elements.randomizeHash.disabled = true;
   setMessage('Randomizing hash...', 'muted');
@@ -239,6 +281,10 @@ async function randomizeHash(): Promise<void> {
     });
 
     currentHashSalt = response.hashSalt;
+    savedSettings = normalizeSettings({
+      ...savedSettings,
+      hashSalt: response.hashSalt,
+    });
     renderTemplateValues(currentCookieStoreId, collectSettings());
     setMessage('Hash randomized.', 'success');
   } catch (error) {
@@ -260,8 +306,13 @@ async function openIpCheckSite(): Promise<void> {
   }
 }
 
-function renderStatus(status: StatusResponse): void {
+function renderStatus(
+  status: StatusResponse,
+  options: { updateInputs?: boolean } = {},
+): void {
   const settings = normalizeSettings(status.settings || DEFAULT_SETTINGS);
+  const updateInputs = options.updateInputs ?? true;
+  savedSettings = settings;
   currentCookieStoreId = status.cookieStoreId;
   currentHashSalt = settings.hashSalt;
 
@@ -269,9 +320,13 @@ function renderStatus(status: StatusResponse): void {
   elements.bypassLocal.checked = settings.bypassLocal;
   elements.directNonContainer.checked = settings.directNonContainer;
   elements.disableWebRtc.checked = settings.disableWebRtc;
-  elements.proxyUrlTemplate.value = settings.proxyUrlTemplate;
-  elements.sessionTemplate.value = settings.sessionTemplate;
-  renderTemplateValues(status.cookieStoreId, settings);
+
+  if (updateInputs) {
+    elements.proxyUrlTemplate.value = settings.proxyUrlTemplate;
+    elements.sessionTemplate.value = settings.sessionTemplate;
+  }
+
+  renderTemplateValues(status.cookieStoreId, collectSettings());
   document.body.dataset.enabled = status.enabled ? 'true' : 'false';
 }
 
@@ -301,6 +356,18 @@ function collectSettings(): ProxySettings {
     proxyDns: true,
     proxyUrlTemplate: elements.proxyUrlTemplate.value,
     sessionTemplate: elements.sessionTemplate.value,
+  });
+}
+
+function collectControlSettings(): ProxySettings {
+  return normalizeSettings({
+    ...savedSettings,
+    bypassLocal: elements.bypassLocal.checked,
+    disableWebRtc: elements.disableWebRtc.checked,
+    directNonContainer: elements.directNonContainer.checked,
+    enabled: elements.enabled.checked,
+    hashSalt: currentHashSalt,
+    proxyDns: true,
   });
 }
 

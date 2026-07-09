@@ -148,8 +148,15 @@ h1 {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 8px;
   margin-top: 3px;
+}
+
+.title-icon {
+  display: block;
+  flex: 0 0 auto;
+  height: 30px;
+  width: 30px;
 }
 
 .version-badge {

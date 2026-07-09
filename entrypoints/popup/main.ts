@@ -36,6 +36,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
       <div>
         <p class="eyebrow">Firefox containers</p>
         <div class="title-row">
+          <img class="title-icon" src="/icon/icon.svg" alt="" aria-hidden="true" />
           <h1>Session Proxy</h1>
           <span class="version-badge">${appVersion}</span>
         </div>

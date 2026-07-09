@@ -263,11 +263,33 @@ async function getStatus(): Promise<StatusResponse> {
 }
 
 async function updateSettings(settings: ProxySettings): Promise<StatusResponse> {
-  activeSettings = normalizeSettings(settings);
+  const nextSettings = normalizeSettings(settings);
+
+  if (nextSettings.enabled) {
+    const validationError = validateProxySettings(nextSettings);
+
+    if (validationError) {
+      const status = await getStatus();
+      status.configError = validationError;
+
+      return status;
+    }
+  }
+
+  activeSettings = nextSettings;
   await saveSettings(activeSettings);
   await applyPrivacySettings(activeSettings);
 
   return getStatus();
+}
+
+function validateProxySettings(settings: ProxySettings): string | undefined {
+  try {
+    buildProxyFromSettings(settings, DEFAULT_COOKIE_STORE_ID);
+    return undefined;
+  } catch (error) {
+    return getErrorMessage(error);
+  }
 }
 
 async function randomizeHashSalt(): Promise<RandomizeHashResponse> {

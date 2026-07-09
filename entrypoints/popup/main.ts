@@ -67,7 +67,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         <textarea
           id="proxyUrlTemplate"
           spellcheck="false"
-          placeholder="socks5h://user-session-\${session}:pass@host.example:33335"
+          placeholder="socks5h://user-session-\${session}:pass@host.example:22228"
         ></textarea>
       </label>
 
